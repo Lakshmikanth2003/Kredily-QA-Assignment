@@ -1,0 +1,270 @@
+{
+  "info": {
+    "_postman_id": "kredily-qa-api-collection-2026",
+    "name": "Kredily QA Assignment - API Testing",
+    "description": "API test collection prepared from API routes identified in the Kredily Android APK bundle. The production API base URL and authentication details were not reliably exposed during testing. Therefore {{base_url}} and {{auth_token}} are placeholders and requests were not executed. HTTP methods are marked as provisional where the APK did not expose the method clearly; verify before execution.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://REPLACE_WITH_KREDILY_API_HOST"
+    },
+    {
+      "key": "auth_token",
+      "value": "REPLACE_WITH_AUTH_TOKEN"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Credentials Verify - Positive",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"REPLACE_WITH_TEST_EMAIL\",\n  \"password\": \"REPLACE_WITH_TEST_PASSWORD\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/ws/v1/accounts/credentials-verify",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "ws",
+            "v1",
+            "accounts",
+            "credentials-verify"
+          ]
+        },
+        "description": "Positive template. Payload fields are placeholders because the exact request schema was not exposed reliably."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response is successful or authentication is handled', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Credentials Verify - Negative",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"invalid@example.com\",\n  \"password\": \"InvalidPassword\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/ws/v1/accounts/credentials-verify",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "ws",
+            "v1",
+            "accounts",
+            "credentials-verify"
+          ]
+        },
+        "description": "Negative template using invalid credentials."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Invalid credentials are rejected', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 422]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Leave Balances - Positive",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/mapi/v1/leave/balances/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "mapi",
+            "v1",
+            "leave",
+            "balances",
+            "me"
+          ]
+        },
+        "description": "Positive template. Authentication header is a placeholder."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Authenticated leave balance request returns success', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Leave Balances - Negative / Missing Auth",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/mapi/v1/leave/balances/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "mapi",
+            "v1",
+            "leave",
+            "balances",
+            "me"
+          ]
+        },
+        "description": "Negative template without an Authorization header."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Missing authentication is rejected', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Clock In - Positive",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "{{base_url}}/kapi/v1/attendance/mobile/clockIn",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "kapi",
+            "v1",
+            "attendance",
+            "mobile",
+            "clockIn"
+          ]
+        },
+        "description": "Positive template. Exact clock-in payload was not reliably exposed."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Clock-in request returns success', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Clock In - Negative / Missing Auth",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "{{base_url}}/kapi/v1/attendance/mobile/clockIn",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "kapi",
+            "v1",
+            "attendance",
+            "mobile",
+            "clockIn"
+          ]
+        },
+        "description": "Negative template without authentication."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Unauthenticated clock-in is rejected', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 422]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
