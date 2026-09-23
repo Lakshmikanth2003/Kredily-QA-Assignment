@@ -1,0 +1,1 @@
+# Kredily-QA-Assignment
